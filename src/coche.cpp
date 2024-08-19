@@ -4,11 +4,15 @@
 #include <iostream>
 #include <string>
 
+#include "uci.h"
 #include "utility.h"
 
 int main( int argc, char** argv )
 {
-    std::cout << "Hello World!\n";
+    // Create an instance of the uci engine class
+    uci uci;
+
+    std::cout << uci::name() << " v" << uci::version() << " by " << uci::author() << std::endl;
 
     std::string input;
     while ( true )
@@ -17,16 +21,12 @@ int main( int argc, char** argv )
 
         input = utility::sanitize_string( input );
 
-        if ( input == "quit" )
+        if ( !uci.process( input ) )
         {
-            break;  // Exit the loop if the input is "quit"
+            // Exit the application if instructed
+            break;
         }
-
-        // Process the input (here we just print it)
-        std::cout << "You entered: [" << input << "]" << std::endl;
     }
 
-    std::cout << "Program terminated." << std::endl;
     return 0;
-
 }
