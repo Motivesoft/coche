@@ -23,4 +23,15 @@ public:
      * @return The sanitized string.
      */
     static std::string sanitize_string( const std::string& str );
+
+    /**
+     * Tokenizes a given string by splitting it into two substrings using the first occurrence of a space character.
+     *
+     * @param str The string to be tokenized.
+     *
+     * @return A pair of strings containing the first substring before the first space and the second substring after the first space. If the input string does not contain a space, the second string in the pair will be empty.
+     *
+     * @throws None
+     */
+    static std::pair<std::string,std::string> tokenize( const std::string& str );
 };

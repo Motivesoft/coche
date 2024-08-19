@@ -40,3 +40,15 @@ std::string utility::sanitize_string( const std::string& str )
 
     return trimmed;
 }
+
+std::pair<std::string, std::string> utility::tokenize( const std::string& str )
+{
+    size_t first = str.find_first_of( ' ' );
+    if ( std::string::npos == first )
+    {
+        // No second token
+        return std::make_pair( str, std::string() );
+    }
+
+    return std::make_pair( str.substr( 0, first ), str.substr( first + 1 ) );
+}

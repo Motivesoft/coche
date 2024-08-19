@@ -7,42 +7,37 @@
 class uci
 {
 public:
-    uci()
-    {
-        functionMap["quit"] = std::bind( &uci::command_quit, this, std::placeholders::_1 );
-        // Nothing to do
-    }
+    uci();
 
-    virtual ~uci()
-    {
-        // Nothing to do
-    }
+    virtual ~uci();
 
     bool process( const std::string& command );
 
-    static std::string name()
-    {
-        return "coche";
-    }
+    // Public static methods 
 
-    static std::string author()
-    {
-        return "Motivesoft";
-    }
+    static std::string name();
 
-    static std::string description()
-    {
-        return "A UCI chess engine";
-    }
+    static std::string author();
 
-    static std::string version()
-    {
-        return "0.0.1";
-    }
+    static std::string description();
+
+    static std::string version();
 
 private:
+    // Commands
+
+    bool command_debug( const std::string& arguments );
     bool command_quit( const std::string& arguments );
+    bool command_uci( const std::string& arguments );
 
     std::map<std::string, std::function<bool( const std::string& )>> functionMap;
+
+    // Broadcast methods
+
+    void send_info( const std::string& message );
+
+    // Properties
+
+    bool debugMode;
 };
 
