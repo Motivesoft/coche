@@ -12,6 +12,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\coche.cpp" />
+    <ClCompile Include="src\utility.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\utility.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

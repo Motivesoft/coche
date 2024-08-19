@@ -1,0 +1,42 @@
+#include "utility.h"
+
+bool utility::is_number( const std::string& str )
+{
+    std::string::const_iterator it = str.begin();
+    while ( it != str.end() && std::isdigit( *it ) )
+    {
+        ++it;
+    }
+
+    return !str.empty() && it == str.end();
+}
+
+std::string utility::sanitize_string( const std::string& str )
+{
+    const std::string doubleSpace = "  ";
+    const std::string space = " ";
+
+    // Find first non-space character
+    size_t first = str.find_first_not_of( ' ' );
+    if ( std::string::npos == first )
+    {
+        // Empty string
+        return std::string();
+    }
+
+    // Find last non-space character
+    size_t last = str.find_last_not_of( ' ' );
+
+    // Extract the trimmed portion of the string
+    std::string trimmed = str.substr( first, ( last - first + 1 ) );
+
+    // Now replace multiple spaces with single spaces within the string
+    size_t position = trimmed.find( doubleSpace );
+    while ( position != std::string::npos )
+    {
+        trimmed.replace( position, doubleSpace.length(), space );
+        position = trimmed.find( doubleSpace, position );
+    }
+
+    return trimmed;
+}
