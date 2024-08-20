@@ -83,14 +83,6 @@ bool uci::command_uci( const std::string& arguments )
 
 bool uci::command_perft( const std::string& arguments )
 {
-    // Support the following syntaxes:
-    // - perft [depth]         - perform a search using a depth and the standard start position
-    // - perft [depth] [fen]   - perform a search using a depth and FEN string
-    // - perft fen [fen]       - perform a search using a FEN string containing expected results
-    // - perft file [filename] - perform searches read from a file as FEN strings containing expected results
-    //
-    // Any of the above commands may begin with '-divide' to indicate that the search should be divided
-
     if ( arguments.empty() )
     {
         // TODO consider using this to run a standard test suite of perfts, like Shredder does?
@@ -103,60 +95,7 @@ bool uci::command_perft( const std::string& arguments )
         send_info_string( "perft with arguments: %s", arguments.c_str() );
     }
 
-    // Work out the type of perft we're running
-
-    std::string tokens( arguments );
-    std::string type;
-    std::tie( type, tokens ) = utility::tokenize( tokens );
-
-    bool divide = false;
-    if ( type == "-divide" )
-    {
-        divide = true;
-
-        std::tie( type, tokens ) = utility::tokenize( tokens );
-    }
-
-    if ( utility::is_number( type ) )
-    {
-        // Depth, with or without FEN
-        int depth = std::stoi( type );
-
-        if ( tokens.empty() )
-        {
-            perft::runDepth( depth, divide );
-        }
-        else
-        {
-            perft::runDepth( depth, tokens, divide );
-        }
-    }
-    else if ( type == "fen" )
-    {
-        if ( tokens.empty() )
-        {
-            logger::error( "Missing FEN" );
-        }
-        else
-        {
-            perft::runFen( tokens, divide );
-        }
-    }
-    else if ( type == "file" )
-    {
-        if ( tokens.empty() )
-        {
-            logger::error( "Missing filename" );
-        }
-        else
-        {
-            perft::runFile( tokens, divide );
-        }
-    }
-    else
-    {
-        logger::error( "Unknown perft command: %s", type.c_str() );
-    }
+    perft::run( arguments );
 
     return true;
 }
