@@ -1,6 +1,7 @@
 #include "uci.h"
 
 #include "logger.h"
+#include "perft.h"
 #include "utility.h"
 
 #ifdef _DEBUG
@@ -18,8 +19,6 @@ uci::uci( bool debug ) : debugMode( debug )
     functionMap[ "uci" ] = std::bind( &uci::command_uci, this, std::placeholders::_1 );
 
     functionMap[ "perft" ] = std::bind( &uci::command_perft, this, std::placeholders::_1 );
-
-    debugMode = false;
 }
 
 uci::~uci()
@@ -84,14 +83,27 @@ bool uci::command_uci( const std::string& arguments )
 
 bool uci::command_perft( const std::string& arguments )
 {
+    // Support the following syntaxes:
+    // - perft [depth]         - perform a search using a depth and the standard start position
+    // - perft [depth] [fen]   - perform a search using a depth and FEN string
+    // - perft fen [fen]       - perform a search using a FEN string containing expected results
+    // - perft file [filename] - perform searches read from a file as FEN strings containing expected results
+    //
+    // Any of the above commands may begin with '-divide' to indicate that the search should be divided
+
+    if ( arguments.empty() )
+    {
+        // TODO consider using this to run a standard test suite of perfts, like Shredder does?
+        logger::error( "perft requires at least one argument" );
+        return true;
+    }
+
+    if( debugMode )
+    {
+        send_info_string( "perft with arguments: %s", arguments.c_str() );
+    }
+
     return true;
-}
-
-// Broadcasts
-
-void uci::send_info( const std::string& message )
-{
-    std::cout << "info string " << message << std::endl;
 }
 
 // Static methods

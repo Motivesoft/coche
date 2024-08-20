@@ -38,7 +38,34 @@ private:
 
     // Broadcast methods
 
-    void send_info( const std::string& message );
+    /**
+     * Sends an info string to the caller via stdout.
+     */
+    template <typename T, typename... Args>
+    inline static void send_info_string( T&& first, Args&&... args )
+    {
+        send_info( "string", first, std::forward<Args>( args )... );
+    }
+
+    /**
+     * Internal method, use one of the specialised send_info_xxx() methods.
+     */
+    template <typename T, typename... Args>
+    inline static void send_info( const char* infoType, T&& first, Args&&... args )
+    {
+        std::printf( "info %s ", infoType );
+        send( first, std::forward<Args>( args )... );
+    }
+
+    /**
+     * Sends a formatted string to the caller via stdout.
+     */
+    template <typename T, typename... Args>
+    inline static void send( T&& first, Args&&... args )
+    {
+        std::printf( first, std::forward<Args>( args )... );
+        std::printf( "\n" );
+    }
 
     // Properties
 

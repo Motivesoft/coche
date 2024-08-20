@@ -106,7 +106,8 @@ int main( int argc, char** argv )
 
             if ( !uci.process( input ) )
             {
-                // Exit the application if instructed
+                // Exit the application if instructed. This assumes that the shutdown is orderly because the UCI protocol doesn't
+                // really offer anything else and this is likely being driven by an external process that also knows the UCI rules
                 break;
             }
         }
@@ -121,6 +122,7 @@ int main( int argc, char** argv )
 
     }
 
+    // Housekeeping
     if ( file.is_open() )
     {
         file.close();
