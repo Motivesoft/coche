@@ -1,5 +1,9 @@
 #include "utility.h"
 
+#include <chrono>
+#include <iomanip>
+#include <sstream>
+
 bool utility::is_number( const std::string& str )
 {
     std::string::const_iterator it = str.begin();

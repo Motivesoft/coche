@@ -1,5 +1,6 @@
 #include "uci.h"
 
+#include "logger.h"
 #include "utility.h"
 
 #ifdef _DEBUG
@@ -16,6 +17,8 @@ uci::uci()
     functionMap[ "quit" ] = std::bind( &uci::command_quit, this, std::placeholders::_1 );
     functionMap[ "uci" ] = std::bind( &uci::command_uci, this, std::placeholders::_1 );
 
+    functionMap[ "perft" ] = std::bind( &uci::command_perft, this, std::placeholders::_1 );
+
     debugMode = false;
 }
 
@@ -28,26 +31,26 @@ bool uci::process( const std::string& input )
 {
     auto [command, arguments] = utility::tokenize( input );
 
-#ifdef _DEBUG
-    if ( arguments.empty() )
-    {
-        std::cerr << "Command: " << command << std::endl;
-    }
-    else
-    {
-        std::cerr << "Command: " << command << " - Arguments: " << arguments << std::endl;
-    }
-#endif
-
     // Ignore command if it is not recognised
     if ( functionMap[ command ] )
     {
+#ifdef _DEBUG
+        if ( arguments.empty() )
+        {
+            logger::debug( "Command: %s", command.c_str() );
+        }
+        else
+        {
+            logger::debug( "Command: %s [%s]", command.c_str(), arguments.c_str() );
+        }
+#endif
+
         return functionMap[ command ]( arguments );
     }
 #ifdef _DEBUG
     else
     {
-        std::cerr << "Unknown command: " << command << std::endl;
+        logger::error( "Unknown command: %s", command.c_str() );
     }
 #endif
 
@@ -61,7 +64,7 @@ bool uci::command_debug( const std::string& arguments )
     debugMode = arguments == "on";
 
 #ifdef _DEBUG
-    std::cerr << "Debug mode: " << (debugMode ? "on" : "off") << std::endl;
+    logger::debug( "Debug mode: %s", ( debugMode ? "on" : "off" ) );
 #endif
 
     return true;
@@ -73,6 +76,13 @@ bool uci::command_quit( const std::string& arguments )
 }
 
 bool uci::command_uci( const std::string& arguments )
+{
+    return true;
+}
+
+// Custom commands
+
+bool uci::command_perft( const std::string& arguments )
 {
     return true;
 }

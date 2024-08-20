@@ -24,11 +24,15 @@ public:
     static std::string version();
 
 private:
-    // Commands
+    // Standard commands
 
     bool command_debug( const std::string& arguments );
     bool command_quit( const std::string& arguments );
     bool command_uci( const std::string& arguments );
+
+    // Custom commands
+
+    bool command_perft( const std::string& arguments );
 
     std::map<std::string, std::function<bool( const std::string& )>> functionMap;
 
