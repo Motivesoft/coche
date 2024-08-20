@@ -45,6 +45,25 @@ int main( int argc, char** argv )
                     stream = &file;
                 }
             }
+            else if ( arg == "-h" || arg == "--help" )
+            {
+                std::cout << uci::name() << " v" << uci::version() << " by " << uci::author() << std::endl;
+                std::cout << std::endl;
+                std::cout << "Usage:" << std::endl;
+                std::cout << "    " << utility::filename( argv[ 0 ] ) << " [options]" << std::endl;
+                std::cout << std::endl;
+                std::cout << "Options:" << std::endl;
+                std::cout << "    -i, --input [file]    Read UCI input from file" << std::endl;
+                std::cout << "    -h, --help            Print this help" << std::endl;
+                std::cout << "    -v, --version         Print version information" << std::endl;
+
+                return 0;
+            }
+            else if ( arg == "-v" || arg == "--version" )
+            {
+                std::cout << uci::name() << " v" << uci::version() << " by " << uci::author() << std::endl;
+                return 0;
+            }
         }
     }
 #if _DEBUG

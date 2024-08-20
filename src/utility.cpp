@@ -56,3 +56,19 @@ std::pair<std::string, std::string> utility::tokenize( const std::string& str )
 
     return std::make_pair( str.substr( 0, first ), str.substr( first + 1 ) );
 }
+
+std::string utility::filename( const std::string& path )
+{
+    size_t first = path.find_last_of( '/' );
+    if ( std::string::npos == first )
+    {
+        first = path.find_last_of( '\\' );
+    }
+
+    if ( std::string::npos != first )
+    {
+        return path.substr( first + 1 );
+    }
+
+    return path;
+}

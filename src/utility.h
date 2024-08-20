@@ -34,4 +34,15 @@ public:
      * @throws None
      */
     static std::pair<std::string,std::string> tokenize( const std::string& str );
+
+    /**
+     * Extracts the filename element from a given path, including extension if present.
+     *
+     * @param path The path.
+     *
+     * @return The filename extracted from the path.
+     *
+     * @throws None
+     */
+    static std::string filename( const std::string& path );
 };
