@@ -7,7 +7,7 @@
 class uci
 {
 public:
-    uci();
+    uci( bool debug );
 
     virtual ~uci();
 

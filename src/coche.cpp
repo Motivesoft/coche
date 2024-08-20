@@ -11,8 +11,10 @@
 
 int main( int argc, char** argv )
 {
+    // Variables used for input
     std::istream* stream = &std::cin;
     std::ifstream file;
+    bool debugMode = false;
 
     // Process the command line arguments
     if ( argc > 1 )
@@ -53,6 +55,7 @@ int main( int argc, char** argv )
                 std::cout << "    " << utility::filename( argv[ 0 ] ) << " [options]" << std::endl;
                 std::cout << std::endl;
                 std::cout << "Options:" << std::endl;
+                std::cout << "    -d, --debug           Put the engine into debug mode" << std::endl;
                 std::cout << "    -i, --input [file]    Read UCI input from file" << std::endl;
                 std::cout << "    -h, --help            Print this help" << std::endl;
                 std::cout << "    -v, --version         Print version information" << std::endl;
@@ -64,6 +67,15 @@ int main( int argc, char** argv )
                 std::cout << uci::name() << " v" << uci::version() << " by " << uci::author() << std::endl;
                 return 0;
             }
+            else if ( arg == "-d" || arg == "--debug" )
+            {
+                debugMode = true;
+            }
+            else
+            {
+                logger::error( "Unrecognised command line argument: %s", argv[ i ] );
+                return 1;
+            }
         }
     }
 #if _DEBUG
@@ -74,7 +86,7 @@ int main( int argc, char** argv )
 #endif
 
     // Create an instance of the uci engine class
-    uci uci;
+    uci uci( debugMode );
 
     std::cout << uci::name() << " v" << uci::version() << " by " << uci::author() << std::endl;
 

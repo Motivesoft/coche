@@ -11,7 +11,7 @@
 #define VERSION "0.0.1"
 #endif
 
-uci::uci()
+uci::uci( bool debug ) : debugMode( debug )
 {
     functionMap[ "debug" ] = std::bind( &uci::command_debug, this, std::placeholders::_1 );
     functionMap[ "quit" ] = std::bind( &uci::command_quit, this, std::placeholders::_1 );
