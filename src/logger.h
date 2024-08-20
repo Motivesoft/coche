@@ -5,6 +5,10 @@
 class logger
 {
     // Keep these in the header file
+    // 
+    // These are not necessarily fast methods. Typically, surround calls to these methods with a "#ifdef _DEBUG" block 
+    // so they get compiled out in release builds but then use them as-is for special situations during development if required
+
 public:
     template <typename T, typename... Args>
     inline static void debug( T&& first, Args&&... args )
@@ -38,6 +42,8 @@ private:
         std::fprintf( stderr, first, std::forward<Args>( args )... );
         std::fprintf( stderr, "\n" );
     }
+
+    // Implemented here, rather than in utility.h to avoid circular dependencies
 
     static std::string timestamp();
 };
