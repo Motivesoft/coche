@@ -19,6 +19,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="perft.h" />
+    <ClInclude Include="src\fen.h" />
     <ClInclude Include="src\logger.h" />
     <ClInclude Include="src\uci.h" />
     <ClInclude Include="src\utility.h" />

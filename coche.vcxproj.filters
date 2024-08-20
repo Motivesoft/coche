@@ -44,5 +44,8 @@
     <ClInclude Include="perft.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\fen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

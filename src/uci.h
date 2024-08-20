@@ -26,6 +26,8 @@ public:
 private:
     // Standard commands
 
+    std::map<std::string, std::function<bool( const std::string& )>> functionMap;
+
     bool command_debug( const std::string& arguments );
     bool command_quit( const std::string& arguments );
     bool command_uci( const std::string& arguments );
@@ -34,9 +36,17 @@ private:
 
     bool command_perft( const std::string& arguments );
 
-    std::map<std::string, std::function<bool( const std::string& )>> functionMap;
-
     // Broadcast methods
+
+    /**
+     * Sends a formatted string to the caller via stdout.
+     */
+    template <typename T, typename... Args>
+    inline static void send( T&& first, Args&&... args )
+    {
+        std::printf( first, std::forward<Args>( args )... );
+        std::printf( "\n" );
+    }
 
     /**
      * Sends an info string to the caller via stdout.
@@ -55,16 +65,6 @@ private:
     {
         std::printf( "info %s ", infoType );
         send( first, std::forward<Args>( args )... );
-    }
-
-    /**
-     * Sends a formatted string to the caller via stdout.
-     */
-    template <typename T, typename... Args>
-    inline static void send( T&& first, Args&&... args )
-    {
-        std::printf( first, std::forward<Args>( args )... );
-        std::printf( "\n" );
     }
 
     // Properties

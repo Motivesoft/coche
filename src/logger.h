@@ -9,11 +9,16 @@ class logger
     // These are not necessarily fast methods. Typically, surround calls to these methods with a "#ifdef _DEBUG" block 
     // so they get compiled out in release builds but then use them as-is for special situations during development if required
 
+    inline static bool debugMode = true;
+
 public:
     template <typename T, typename... Args>
     inline static void debug( T&& first, Args&&... args )
     {
-        log( "DEBUG", first, std::forward<Args>( args )... );
+        if ( debugMode )
+        {
+            log( "DEBUG", first, std::forward<Args>( args )... );
+        }
     }
 
     template <typename T, typename... Args>

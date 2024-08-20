@@ -69,6 +69,7 @@ int main( int argc, char** argv )
             }
             else if ( arg == "-d" || arg == "--debug" )
             {
+                // This only equates to a few info string messages, not internal logging
                 debugMode = true;
             }
             else
