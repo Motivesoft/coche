@@ -1,11 +1,13 @@
 #include "perft.h"
 
+#include <chrono>
 #include <fstream>
 #include <iostream>
 #include <vector>
 
 #include "fen.h"
 #include "logger.h"
+#include "move.h"
 #include "utility.h"
 
 void perft::run( const std::string& arguments )
@@ -74,16 +76,16 @@ void perft::run( const std::string& arguments )
     }
 }
 
-void perft::runDepth( int depth, bool divide )
+void perft::runDepth( size_t depth, bool divide )
 {
     runDepth( depth, fen::start_position, divide );
 }
 
-void perft::runDepth( int depth, const std::string& fen, bool divide )
+void perft::runDepth( size_t depth, const std::string& fen, bool divide )
 {
-    auto result = execute( depth, fen, divide );
+    size_t result = execute( depth, fen, divide );
 
-    std::printf( "  Depth: %3d. Actual: %12d\n", depth, result );
+    std::printf( "  Depth: %3zu. Actual: %12zu\n", depth, result );
 }
 
 void perft::runFen( const std::string& fen, bool divide )
@@ -125,24 +127,55 @@ void perft::runFile( const std::string& filename, bool divide )
     }
 }
 
-unsigned int perft::execute( int depth, const std::string& fen, bool divide )
+size_t perft::execute( size_t depth, const std::string& fen, bool divide )
 {
-    // TODO
-    logger::debug( "Not implemented: %d %s", depth, fen.c_str() );
-    return 0;
+    board board;
+
+    // This supposedly gives us up to nanosecond accuracy.
+    auto start = std::chrono::high_resolution_clock::now();
+
+    size_t nodes = search( depth, board, divide );
+
+    auto end = std::chrono::high_resolution_clock::now();
+
+    // TODO Report to the nanosecond for now, but if microsecond or millisecond is enough, change this
+    std::chrono::duration<long long, std::nano> duration = end - start;
+
+    auto nanos = std::chrono::duration_cast<std::chrono::nanoseconds>( duration ).count();
+    auto millis = std::chrono::duration_cast<std::chrono::milliseconds>( duration ).count();
+
+    // Convert to hh:mm:ss.nn
+    static const long long nanosPerSecond = 1000LL * 1000LL * 1000LL;
+    static const long long nanosPerMinute = 60LL * nanosPerSecond;
+    static const long long nanosPerHour = 60LL * nanosPerMinute;
+
+    auto hours = nanos / nanosPerHour;
+    nanos %= nanosPerHour;
+
+    auto minutes = nanos / nanosPerMinute;
+    nanos %= nanosPerMinute;
+
+    auto seconds = nanos / nanosPerSecond;
+    nanos %= nanosPerSecond;
+
+    // Print the duration in hours:minutes:seconds format
+    std::printf( "Depth: %3zu. Nodes: %12zu. Time: %2lld:%02lld:%02lld.%09lld (%lld ms)\n", depth, nodes, hours, minutes, seconds, nanos, millis );
+
+    return nodes;
 }
 
 void perft::execute( const std::string& fen, bool divide )
 {
+#ifdef _DEBUG
     logger::debug( "Processing: %s", fen.c_str() );
+#endif
 
-    // TODO
     // This is expected to contain a FEN string with expected results at the end, either comma or semi-colon separated
     std::string position;
     std::string results;
     
     // Collection of depths and expected counts
-    std::vector<std::pair<int,int>> expectedResults;
+    std::vector<std::pair<size_t,size_t>> expectedResults;
 
     // Split the string on the first semi-colon
     std::tie(position, results) = utility::split( fen, ';' );
@@ -166,7 +199,7 @@ void perft::execute( const std::string& fen, bool divide )
 
         std::string result;
 
-        int depth = 1;
+        size_t depth = 1;
 
         while ( !results.empty() )
         {
@@ -174,11 +207,10 @@ void perft::execute( const std::string& fen, bool divide )
             std::tie( result, results ) = utility::split( results, ',' );
 
             // Add to the collection to be tested later
-            expectedResults.push_back( std::make_pair( depth, std::stoi( result ) ) );
-
-#ifdef _DEBUG
-            logger::debug( "Expected result: Depth %d, count: %d", depth, std::stoi( result ) );
-#endif
+            if ( !result.empty() )
+            {
+                expectedResults.push_back( std::make_pair( depth, std::stoul( result ) ) );
+            }
 
             // Increment the depth
             depth++;
@@ -190,6 +222,7 @@ void perft::execute( const std::string& fen, bool divide )
         // - FEN;D1 10;D2 20
         //
         // Assume that the sender got the format correct
+        // Other items are allowed in this same structure, so make sure we only take the ones starting with 'D'
 
         std::string result;
         std::string depth;
@@ -200,17 +233,69 @@ void perft::execute( const std::string& fen, bool divide )
             // Split each semi-colon separated element from the input string
             std::tie( result, results ) = utility::split( results, ';' );
 
-            // Split each segment on the first space
-            std::tie( depth, count ) = utility::split( result, ' ' );
+            // Trap anything malformed, e.g. FEN;;;
+            if ( !result.empty() )
+            {
+                // Split each segment on the first space
+                std::tie( depth, count ) = utility::split( result, ' ' );
 
-            // Add to the collection to be tested later
-            expectedResults.push_back( std::make_pair( std::stoi( depth.substr( 1 ) ), std::stoi( count ) ) );
-
-#ifdef _DEBUG
-            logger::debug( "Expected result: Depth %d, count: %d", std::stoi( depth.substr( 1 ) ), std::stoi( count ) );
-#endif
+                // Add to the collection to be tested later
+                if ( depth[ 0 ] == 'D' )
+                {
+                    expectedResults.push_back( std::make_pair( std::stoul( depth.substr( 1 ) ), std::stoul( count ) ) );
+                }
+            }
         }
     }
 
-    // TODO for each expectedResult, run and check
+    if ( !expectedResults.empty() )
+    {
+        std::printf( "FEN: %s\n", position.c_str() );
+
+        // Now run the tests
+        for ( auto it = expectedResults.cbegin(); it != expectedResults.cend(); it++ )
+        {
+            size_t result = execute( it->first, fen, divide );
+
+            std::printf( "  Depth: %3zu. Expected: %12zu. Actual: %12zu. %s\n", it->first, it->second, result, ( it->second == result ? "PASSED" : "FAILED" ) );
+        }
+    }
+#ifdef _DEBUG
+    else
+    {
+        logger::debug( "Skipping line with no test results defined" );
+    }
+#endif
+}
+
+size_t perft::search( size_t depth, board& board, bool divide )
+{
+    if ( depth == 0 )
+    {
+        return 1;
+    }
+
+    size_t nodes = 0;
+
+    std::vector<uint16_t> moves( 256 );
+
+    auto count = board.get_moves( moves );
+
+    for ( auto it = moves.cbegin(); it != moves.cend(); it++ )
+    {
+        auto undo = board.make_move( *it );
+
+        auto moveNodes = search( depth - 1, board, false );
+
+        nodes += moveNodes;
+
+        if ( divide )
+        {
+            std::printf( "  %s : %12zu\n", move::to_string( *it ).c_str(), moveNodes );
+        }
+
+        board.unmake_move( undo );
+    }
+
+    return nodes;
 }

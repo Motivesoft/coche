@@ -30,6 +30,12 @@
     <ClCompile Include="src\perft.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\board.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\move.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\utility.h">
@@ -46,6 +52,12 @@
     </ClInclude>
     <ClInclude Include="src\fen.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\board.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\move.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

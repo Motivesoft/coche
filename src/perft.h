@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "board.h"
+
 class perft
 {
 public:
@@ -19,15 +21,17 @@ public:
     static void run( const std::string& arguments );
 
 private:
-    static void runDepth( int depth, bool divide );
+    static void runDepth( size_t depth, bool divide );
 
-    static void runDepth( int depth, const std::string& fen, bool divide );
+    static void runDepth( size_t depth, const std::string& fen, bool divide );
 
     static void runFen( const std::string& fen, bool divide );
 
     static void runFile( const std::string& filename, bool divide );
 
-    static unsigned int execute( int depth, const std::string& fen, bool divide );
+    static size_t execute( size_t depth, const std::string& fen, bool divide );
 
     static void execute( const std::string& fen, bool divide );
+
+    static size_t search( size_t depth, board& board, bool divide );
 };
