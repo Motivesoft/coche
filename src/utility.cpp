@@ -57,6 +57,20 @@ std::pair<std::string, std::string> utility::tokenize( const std::string& str )
     return std::make_pair( str.substr( 0, first ), str.substr( first + 1 ) );
 }
 
+std::pair<std::string, std::string> utility::split( const std::string& str, char separator )
+{
+    size_t pos = str.find( separator );
+
+    if ( pos == std::string::npos )
+    {
+        return std::make_pair( str, std::string() );
+    }
+
+    // Trim the strings that we return
+    return std::make_pair( utility::sanitize_string( str.substr( 0, pos ) ), 
+                           utility::sanitize_string( str.substr( pos + 1 ) ) );
+}
+
 std::string utility::filename( const std::string& path )
 {
     size_t first = path.find_last_of( '/' );

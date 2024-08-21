@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <vector>
 
 #include "fen.h"
 #include "logger.h"
@@ -105,6 +106,7 @@ void perft::runFile( const std::string& filename, bool divide )
     std::string input;
     while ( std::getline( file, input ) )
     {
+        // Trim leading, trailing and contained whitespace
         input = utility::sanitize_string( input );
 
         // Allow blank lines and comments
@@ -113,7 +115,7 @@ void perft::runFile( const std::string& filename, bool divide )
             continue;
         }
 
-        // Run each line as a perft test
+        // Run each line as a perft test. These lines are expected to contain their expected results and will report whether they succeed-
         execute( input, divide );
     }
 
@@ -132,6 +134,83 @@ unsigned int perft::execute( int depth, const std::string& fen, bool divide )
 
 void perft::execute( const std::string& fen, bool divide )
 {
+    logger::debug( "Processing: %s", fen.c_str() );
+
     // TODO
-    logger::debug( "Not implemented: %s", fen.c_str() );
+    // This is expected to contain a FEN string with expected results at the end, either comma or semi-colon separated
+    std::string position;
+    std::string results;
+    
+    // Collection of depths and expected counts
+    std::vector<std::pair<int,int>> expectedResults;
+
+    // Split the string on the first semi-colon
+    std::tie(position, results) = utility::split( fen, ';' );
+
+    if( results.empty() )
+    {
+        // Must be split the string with commas
+        std::tie(position, results) = utility::split( fen, ',' );
+
+        if( results.empty() )
+        {
+            // No results
+            logger::error( "Missing results in FEN: %s", fen.c_str() );
+            return;
+        }
+
+        // Format is along the lines of 
+        // - FEN,10,20
+        //
+        // Assume that the sender got the format correct
+
+        std::string result;
+
+        int depth = 1;
+
+        while ( !results.empty() )
+        {
+            // Split each semi-colon separated element from the input string
+            std::tie( result, results ) = utility::split( results, ',' );
+
+            // Add to the collection to be tested later
+            expectedResults.push_back( std::make_pair( depth, std::stoi( result ) ) );
+
+#ifdef _DEBUG
+            logger::debug( "Expected result: Depth %d, count: %d", depth, std::stoi( result ) );
+#endif
+
+            // Increment the depth
+            depth++;
+        }
+    }
+    else
+    {
+        // Format is along the lines of 
+        // - FEN;D1 10;D2 20
+        //
+        // Assume that the sender got the format correct
+
+        std::string result;
+        std::string depth;
+        std::string count;
+
+        while ( !results.empty() )
+        {
+            // Split each semi-colon separated element from the input string
+            std::tie( result, results ) = utility::split( results, ';' );
+
+            // Split each segment on the first space
+            std::tie( depth, count ) = utility::split( result, ' ' );
+
+            // Add to the collection to be tested later
+            expectedResults.push_back( std::make_pair( std::stoi( depth.substr( 1 ) ), std::stoi( count ) ) );
+
+#ifdef _DEBUG
+            logger::debug( "Expected result: Depth %d, count: %d", std::stoi( depth.substr( 1 ) ), std::stoi( count ) );
+#endif
+        }
+    }
+
+    // TODO for each expectedResult, run and check
 }

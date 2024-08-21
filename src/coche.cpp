@@ -14,6 +14,7 @@ int main( int argc, char** argv )
     // Variables used for input
     std::istream* stream = &std::cin;
     std::ifstream file;
+
     bool debugMode = false;
 
     // Process the command line arguments

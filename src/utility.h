@@ -24,6 +24,8 @@ public:
      */
     static std::string sanitize_string( const std::string& str );
 
+    static std::pair<std::string, std::string> split( const std::string& str, char separator );
+
     /**
      * Tokenizes a given string by splitting it into two substrings using the first occurrence of a space character.
      *
