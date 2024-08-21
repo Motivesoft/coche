@@ -129,7 +129,7 @@ void perft::runFile( const std::string& filename, bool divide )
 
 size_t perft::execute( size_t depth, const std::string& fen, bool divide )
 {
-    board board;
+    board board( fen );
 
     // This supposedly gives us up to nanosecond accuracy.
     auto start = std::chrono::high_resolution_clock::now();

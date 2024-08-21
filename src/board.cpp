@@ -1,5 +1,10 @@
 #include "board.h"
 
+board::board( const std::string& fen )
+{
+
+}
+
 /**
  * Populate the supplied vector with moves and return the count
  */

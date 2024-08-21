@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <vector>
 
 #include "move.h"
@@ -7,7 +8,8 @@
 class board
 {
 public:
-    board() = default;
+    board( const std::string& fen );
+
     virtual ~board() = default;
 
     // Delete copy constructor and copy assignment operator
