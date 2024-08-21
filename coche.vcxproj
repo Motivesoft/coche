@@ -22,6 +22,7 @@
   <ItemGroup>
     <ClInclude Include="perft.h" />
     <ClInclude Include="src\board.h" />
+    <ClInclude Include="src\coord.h" />
     <ClInclude Include="src\fen.h" />
     <ClInclude Include="src\logger.h" />
     <ClInclude Include="src\move.h" />

@@ -277,7 +277,8 @@ size_t perft::search( size_t depth, board& board, bool divide )
 
     size_t nodes = 0;
 
-    std::vector<uint16_t> moves( 256 );
+    std::vector<move_t> moves;
+    moves.reserve( 256 );
 
     auto count = board.get_moves( moves );
 
